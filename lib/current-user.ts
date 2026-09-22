@@ -71,12 +71,31 @@ export async function syncWhopProfile(accessToken: string, whopUserId: string) {
  */
 export async function getIframeWhopUserId(headers: Headers): Promise<string | null> {
   try {
-    const { userId } = await whopApi.verifyUserToken(headers, { dontThrow: true } as any);
-    return userId ?? null;
+    const token = headers.get("x-whop-user-token");
+    if (!token) return null;
+
+    const res = await fetch("https://api.whop.com/oauth/userinfo", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      cache: "no-store",
+    });
+
+    if (!res.ok) return null;
+
+    const profile = (await res.json()) as {
+      sub?: string;
+    };
+
+    return profile.sub ?? null;
   } catch {
     return null;
   }
 }
+
+
+
+
 
 
 
