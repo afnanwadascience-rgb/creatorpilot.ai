@@ -8,28 +8,35 @@ export type PlanTier = "free" | "pro";
 export interface Entitlement {
   plan: PlanTier;
   hasProAccess: boolean;
+
+  limit: number | null;
   analysisLimit: number | null;
+
   analysesUsed: number;
   analysesRemaining: number | null;
+
   canAnalyze: boolean;
   message: string | null;
 }
 
 export async function hasProAccess(user: User): Promise<boolean> {
   /*
-   * Whop membership/access checking will be connected here
-   * after the SDK compatibility issue is fixed.
+   * Whop Pro access checking will be connected after
+   * the remaining Whop membership integration is finalized.
    */
   return false;
 }
 
-export async function getUserEntitlement(user: User): Promise<Entitlement> {
+export async function getUserEntitlement(
+  user: User
+): Promise<Entitlement> {
   const pro = await hasProAccess(user);
 
   if (pro) {
     return {
       plan: "pro",
       hasProAccess: true,
+      limit: null,
       analysisLimit: null,
       analysesUsed: 0,
       analysesRemaining: null,
@@ -51,6 +58,7 @@ export async function getUserEntitlement(user: User): Promise<Entitlement> {
   return {
     plan: "free",
     hasProAccess: false,
+    limit: FREE_ANALYSIS_LIMIT,
     analysisLimit: FREE_ANALYSIS_LIMIT,
     analysesUsed,
     analysesRemaining,
@@ -74,6 +82,7 @@ export async function getEntitlement(
     return {
       plan: "free",
       hasProAccess: false,
+      limit: FREE_ANALYSIS_LIMIT,
       analysisLimit: FREE_ANALYSIS_LIMIT,
       analysesUsed: 0,
       analysesRemaining: 0,

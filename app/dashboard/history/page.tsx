@@ -16,7 +16,7 @@ export default async function HistoryPage() {
   return (
     <div>
       <h1 className="text-2xl font-semibold">Analysis History</h1>
-      <p className="mt-1 text-sm text-muted">Every script you've analyzed, most recent first.</p>
+      <p className="mt-1 text-sm text-muted">Every script you&apos;ve analyzed, most recent first.</p>
 
       {analyses.length === 0 ? (
         <div className="card mt-8 text-center text-sm text-muted">
@@ -48,3 +48,4 @@ export default async function HistoryPage() {
     </div>
   );
 }
+

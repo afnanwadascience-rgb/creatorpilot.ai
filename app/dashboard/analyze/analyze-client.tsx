@@ -59,7 +59,7 @@ export function AnalyzeClient({ initialEntitlement }: { initialEntitlement: Enti
             }
       );
     } catch {
-      setState({ status: "error", message: "We couldn't analyze this script right now. Please try again." });
+      setState({ status: "error", message: "We couldn&apos;t analyze this script right now. Please try again." });
     }
   }
 
@@ -91,7 +91,7 @@ export function AnalyzeClient({ initialEntitlement }: { initialEntitlement: Enti
 
         {!entitlement.canAnalyze && (
           <div className="card mt-4 border-primary/50">
-            <p className="text-sm text-white">You've used all 10 free analyses.</p>
+            <p className="text-sm text-white">You&apos;ve used all 10 free analyses.</p>
             <Link href="/dashboard/account" className="btn-primary mt-3">
               Upgrade to Pro
             </Link>
@@ -130,3 +130,5 @@ export function AnalyzeClient({ initialEntitlement }: { initialEntitlement: Enti
     </div>
   );
 }
+
+

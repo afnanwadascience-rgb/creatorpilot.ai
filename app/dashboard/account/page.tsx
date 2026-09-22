@@ -30,7 +30,7 @@ export default async function AccountPage() {
           <h2 className="text-lg font-medium">Upgrade to Pro</h2>
           <p className="mt-2 text-sm text-muted">
             Pro unlocks unlimited script analyses. CreatorPilot Pro is sold as a Whop
-            product — purchase it from this app's listing on Whop to unlock it
+            product — purchase it from this app&apos;s listing on Whop to unlock it
             automatically here.
           </p>
           {productId ? (
@@ -44,7 +44,7 @@ export default async function AccountPage() {
             </a>
           ) : (
             <p className="mt-4 text-xs text-muted">
-              The Pro product isn't configured yet. Set WHOP_PRODUCT_ID once it's created.
+              The Pro product isn&apos;t configured yet. Set WHOP_PRODUCT_ID once it&apos;s created.
             </p>
           )}
         </div>
@@ -52,3 +52,4 @@ export default async function AccountPage() {
     </div>
   );
 }
+

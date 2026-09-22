@@ -16,7 +16,7 @@ export default async function HistoryDetailPage({
   const { id } = await params;
 
   // Ownership check happens in the query itself (userId: user.id), never
-  // trusting the id alone — a user can't view someone else's analysis by
+  // trusting the id alone — a user can&apos;t view someone else&apos;s analysis by
   // guessing or changing the URL.
   const analysis = await prisma.analysis.findFirst({
     where: { id, userId: user.id },
@@ -28,11 +28,11 @@ export default async function HistoryDetailPage({
 
   const parsedResult = AnalysisResultSchema.safeParse(analysis.result);
   if (!parsedResult.success) {
-    // Defensive: if a historical record's stored JSON somehow doesn't match
-    // the current schema, don't crash the page.
+    // Defensive: if a historical record&apos;s stored JSON somehow doesn&apos;t match
+    // the current schema, don&apos;t crash the page.
     return (
       <div className="card text-center text-sm text-muted">
-        This analysis record couldn't be displayed.
+        This analysis record couldn&apos;t be displayed.
       </div>
     );
   }
@@ -61,3 +61,4 @@ export default async function HistoryDetailPage({
     </div>
   );
 }
+
