@@ -9,12 +9,19 @@ export const AnalyzeRequestSchema = z.object({
 
 export type AnalyzeRequest = z.infer<typeof AnalyzeRequestSchema>;
 
-export interface AnalysisResult {
-  suggestedTitle: string;
-  overallScore: number;
-  hookScore: number;
-  retentionScore: number;
-  structureScore: number;
-  clarityScore: number;
-  [key: string]: unknown;
-}
+export const AnalysisResultSchema = z.object({
+  suggestedTitle: z.string(),
+
+  overallScore: z.number(),
+  hookScore: z.number(),
+  retentionScore: z.number(),
+  structureScore: z.number(),
+  clarityScore: z.number(),
+
+  strengths: z.array(z.string()),
+  weaknesses: z.array(z.string()),
+  retentionRisks: z.array(z.string()),
+  hookSuggestions: z.array(z.string()),
+});
+
+export type AnalysisResult = z.infer<typeof AnalysisResultSchema>;

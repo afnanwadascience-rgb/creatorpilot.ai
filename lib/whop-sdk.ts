@@ -1,25 +1,29 @@
-import Whop from "@whop/sdk";
+import { WhopClient } from "@whop/sdk";
 
-let cachedClient: Whop | null = null;
+function getApiKey(): string {
+  const key = process.env.WHOP_API_KEY;
 
-export function whopAppClient(): Whop {
+  if (!key) {
+    throw new Error("WHOP_API_KEY is not set.");
+  }
+
+  return key;
+}
+
+let cachedClient: WhopClient | null = null;
+
+export function whopApi(): WhopClient {
   if (!cachedClient) {
-    const apiKey = process.env.WHOP_API_KEY;
-
-    if (!apiKey) {
-      throw new Error("WHOP_API_KEY is not configured.");
-    }
-
-    cachedClient = new Whop({
-      apiKey,
+    cachedClient = new WhopClient({
+      token: getApiKey(),
     });
   }
 
   return cachedClient;
 }
 
-export function whopUserClient(accessToken: string): Whop {
-  return new Whop({
-    apiKey: `Bearer ${accessToken}`,
+export function whopUserClient(accessToken: string): WhopClient {
+  return new WhopClient({
+    token: accessToken,
   });
 }

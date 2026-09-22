@@ -1,4 +1,3 @@
-import { whopAppClient } from "@/lib/whop-sdk";
 import { prisma } from "@/lib/prisma";
 import type { User } from "@prisma/client";
 
@@ -10,36 +9,21 @@ export interface Entitlement {
   plan: PlanTier;
   hasProAccess: boolean;
   analysisLimit: number | null;
+  analysesUsed: number;
+  analysesRemaining: number | null;
   canAnalyze: boolean;
   message: string | null;
 }
 
 export async function hasProAccess(user: User): Promise<boolean> {
-  const productId = process.env.WHOP_PRODUCT_ID;
-
-  if (!productId) {
-    return false;
-  }
-
-  try {
-    const client = whopAppClient();
-
-    const access = await client.users.checkAccess(productId, {
-      id: user.whopUserId,
-    });
-
-    return Boolean(access?.has_access);
-  } catch (error) {
-    console.error("Whop entitlement check failed:", error);
-
-    // Never grant Pro access if the Whop check fails.
-    return false;
-  }
+  /*
+   * Whop membership/access checking will be connected here
+   * after the SDK compatibility issue is fixed.
+   */
+  return false;
 }
 
-export async function getUserEntitlement(
-  user: User
-): Promise<Entitlement> {
+export async function getUserEntitlement(user: User): Promise<Entitlement> {
   const pro = await hasProAccess(user);
 
   if (pro) {
@@ -47,47 +31,43 @@ export async function getUserEntitlement(
       plan: "pro",
       hasProAccess: true,
       analysisLimit: null,
+      analysesUsed: 0,
+      analysesRemaining: null,
       canAnalyze: true,
       message: null,
     };
   }
 
   const usage = await prisma.usage.findUnique({
-    where: {
-      userId: user.id,
-    },
+    where: { userId: user.id },
   });
 
-  const analysisCount = usage?.analysisCount ?? 0;
-
-  const remaining = Math.max(
+  const analysesUsed = usage?.analysisCount ?? 0;
+  const analysesRemaining = Math.max(
     0,
-    FREE_ANALYSIS_LIMIT - analysisCount
+    FREE_ANALYSIS_LIMIT - analysesUsed
   );
 
   return {
     plan: "free",
     hasProAccess: false,
     analysisLimit: FREE_ANALYSIS_LIMIT,
-    canAnalyze: remaining > 0,
+    analysesUsed,
+    analysesRemaining,
+    canAnalyze: analysesRemaining > 0,
     message:
-      remaining > 0
+      analysesRemaining > 0
         ? null
         : "You've used all 10 free analyses. Buy Pro to continue.",
   };
 }
 
-/**
- * Backwards-compatible helper used by the analysis API.
- */
 export async function getEntitlement(
   userId: string,
   _whopUserId: string
 ): Promise<Entitlement> {
   const user = await prisma.user.findUnique({
-    where: {
-      id: userId,
-    },
+    where: { id: userId },
   });
 
   if (!user) {
@@ -95,6 +75,8 @@ export async function getEntitlement(
       plan: "free",
       hasProAccess: false,
       analysisLimit: FREE_ANALYSIS_LIMIT,
+      analysesUsed: 0,
+      analysesRemaining: 0,
       canAnalyze: false,
       message: "User not found.",
     };

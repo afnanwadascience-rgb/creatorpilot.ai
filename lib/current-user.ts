@@ -1,6 +1,5 @@
 import { prisma } from "@/lib/prisma";
 import { getSessionFromCookies } from "@/lib/session";
-import { whopApi } from "@/lib/whop-sdk";
 import type { User } from "@prisma/client";
 
 /**
