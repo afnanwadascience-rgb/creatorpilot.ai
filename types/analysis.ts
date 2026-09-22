@@ -11,7 +11,6 @@ export type AnalyzeRequest = z.infer<typeof AnalyzeRequestSchema>;
 
 export const AnalysisResultSchema = z.object({
   suggestedTitle: z.string(),
-
   overallScore: z.number(),
   hookScore: z.number(),
   retentionScore: z.number(),
