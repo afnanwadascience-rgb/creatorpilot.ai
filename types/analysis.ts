@@ -22,6 +22,11 @@ export const AnalysisResultSchema = z.object({
   weaknesses: z.array(z.string()),
   retentionRisks: z.array(z.string()),
   hookSuggestions: z.array(z.string()),
+
+  titleSuggestions: z.array(z.string()),
+  thumbnailIdeas: z.array(z.string()),
+  ctaSuggestions: z.array(z.string()),
+  improvements: z.array(z.string()),
 });
 
 export type AnalysisResult = z.infer<typeof AnalysisResultSchema>;
