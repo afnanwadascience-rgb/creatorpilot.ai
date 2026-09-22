@@ -1,0 +1,61 @@
+// CreatorPilot AI - Prisma schema
+// Identity is anchored entirely to the authenticated Whop user id (whopUserId).
+// Usage counters live server-side and are updated inside transactions so the
+// 10-analysis free limit cannot be bypassed by concurrent requests.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id          String   @id @default(cuid())
+  whopUserId  String   @unique // "sub" claim from Whop OAuth userinfo, e.g. user_xxxxx
+  email       String?
+  username    String?
+  avatarUrl   String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  usage     Usage?
+  analyses  Analysis[]
+
+  @@index([whopUserId])
+}
+
+model Usage {
+  id             String   @id @default(cuid())
+  userId         String   @unique
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  analysisCount  Int      @default(0)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+model Analysis {
+  id             String   @id @default(cuid())
+  userId         String
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  title          String
+  script         String   @db.Text
+
+  overallScore   Int
+  hookScore      Int
+  retentionScore Int
+  structureScore Int
+  clarityScore   Int
+
+  // Full structured AI result, stored as JSON so the UI can re-render
+  // every field (strengths, weaknesses, suggestions, ...) without re-analysis.
+  result         Json
+
+  createdAt      DateTime @default(now())
+
+  @@index([userId])
+  @@index([userId, createdAt])
+}
